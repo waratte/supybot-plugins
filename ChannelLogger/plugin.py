@@ -206,7 +206,7 @@ class ChannelLogger(callbacks.Plugin):
                 self.doLog(irc, channel,
                            '*** %s is now known as %s\n', oldNick, newNick)
     def doJoin(self, irc, msg):
-        if(self.registryValue('hideJoinParts', msg.args[0])):
+        if(self.registryValue('showJoinParts', msg.args[0])):
             for channel in msg.args[0].split(','):
                 self.doLog(irc, channel,
                            '*** %s <%s> has joined %s\n',
@@ -227,7 +227,7 @@ class ChannelLogger(callbacks.Plugin):
                        '*** %s was kicked by %s\n', target, msg.nick)
 
     def doPart(self, irc, msg):
-        if(self.registryValue('hideJoinParts', msg.args[0])):
+        if(self.registryValue('showJoinParts', msg.args[0])):
             if len(msg.args) > 1:
                 reason = " (%s)" % msg.args[1]
             else:
@@ -253,7 +253,7 @@ class ChannelLogger(callbacks.Plugin):
                    '*** %s changes topic to "%s"\n', msg.nick, msg.args[1])
 
     def doQuit(self, irc, msg):
-        if(self.registryValue('hideJoinParts', msg.args[0])):
+        if(self.registryValue('showJoinParts', msg.args[0])):
             if len(msg.args) == 1:
                 reason = " (%s)" % msg.args[0]
             else:
