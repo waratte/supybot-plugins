@@ -253,14 +253,14 @@ class ChannelLogger(callbacks.Plugin):
                    '*** %s changes topic to "%s"\n', msg.nick, msg.args[1])
 
     def doQuit(self, irc, msg):
-        if(self.registryValue('showJoinParts', msg.args[0])):
-            if len(msg.args) == 1:
-                reason = " (%s)" % msg.args[0]
-            else:
-                reason = ""
-            if not isinstance(irc, irclib.Irc):
-                irc = irc.getRealIrc()
-            for (channel, chan) in self.lastStates[irc].channels.iteritems():
+        if len(msg.args) == 1:
+            reason = " (%s)" % msg.args[0]
+        else:
+            reason = ""
+        if not isinstance(irc, irclib.Irc):
+            irc = irc.getRealIrc()
+        for (channel, chan) in self.lastStates[irc].channels.iteritems():
+            if(self.registryValue('showJoinParts', msg.args[0])):
                 if msg.nick in chan.users:
                     self.doLog(irc, channel,
                                '*** %s <%s> has quit IRC%s\n',
