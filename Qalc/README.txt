@@ -1,1 +1,1 @@
-Insert a description of your plugin here, with any notes, etc. about using it.
+a sligtly more advanced plugin for math that can handle variables such as x and y. must have qalc installed for it to work. be sure to run qalc once to download the needed data to make it work. note: this plugin will not work on windows, as there is no qalc for windows

@@ -48,7 +48,7 @@ _ = PluginInternationalization('Qalc')
 
 @internationalizeDocstring
 class Qalc(callbacks.Plugin):
-    """uses qalc to compute mathematical equations and expressions."""
+    """uses qalc to compute mathmatecal equations and expressions."""
     threaded = True
 
 
