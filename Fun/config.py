@@ -3,6 +3,6 @@ import supybot.registry as registry
 
 def configure(advanced):
     from supybot.questions import expect, anything, something, yn
-    conf.registerPlugin('Joke', True)
+    conf.registerPlugin('Fun', True)
 
-joke = conf.registerPlugin('Joke')
+joke = conf.registerPlugin('Fun')

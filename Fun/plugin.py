@@ -41,7 +41,7 @@ import supybot.ircutils as ircutils
 import supybot.callbacks as callbacks
 from supybot.i18n import PluginInternationalization, internationalizeDocstring
 
-_ = PluginInternationalization('Joke')
+_ = PluginInternationalization('Fun')
 
 try:
     with open(conf.supybot.directories.data.dirize('jokes.txt')) as f: pass
@@ -58,7 +58,7 @@ except IOError:
     shutil.copyfile(src, dst)
 
 @internationalizeDocstring
-class Joke(callbacks.Plugin):
+class Fun(callbacks.Plugin):
     """Add the help for "@plugin help Joke" here
     This should describe *how* to use this plugin."""
     threaded = True
@@ -100,7 +100,7 @@ class Joke(callbacks.Plugin):
         irc.replySuccess()
     addfact = wrap(addfact, ['text'])
 
-Class = Joke
+Class = Fun
 
 
 # vim:set shiftwidth=4 softtabstop=4 expandtab textwidth=79:
