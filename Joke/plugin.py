@@ -43,19 +43,12 @@ from supybot.i18n import PluginInternationalization, internationalizeDocstring
 
 _ = PluginInternationalization('Joke')
 
-@internationalizeDocstring
-class Joke(callbacks.Plugin):
-    """Add the help for "@plugin help Joke" here
-    This should describe *how* to use this plugin."""
-    threaded = True
-
 try:
     with open(conf.supybot.directories.data.dirize('jokes.txt')) as f: pass
 except IOError:
     src = os.path.join(os.path.dirname(__file__), os.path.join('jokes.txt'))
     dst = str(conf.supybot.directories.data.dirize('jokes.txt'))
     shutil.copyfile(src, dst)
-
 
 try:
     with open(conf.supybot.directories.data.dirize('facts.txt')) as f: pass
@@ -64,10 +57,15 @@ except IOError:
     dst = str(conf.supybot.directories.data.dirize('facts.txt'))
     shutil.copyfile(src, dst)
 
-class Joke(callbacks.Privmsg):
+@internationalizeDocstring
+class Joke(callbacks.Plugin):
+    """Add the help for "@plugin help Joke" here
+    This should describe *how* to use this plugin."""
+    threaded = True
+
 
     def joke(self,irc,msg,args):
-    	"""takes no
+    	"""takes no arguments
 	Get a random joke from my massive collection of terrible jokes
 	"""
 	jokepath = conf.supybot.directories.data.dirize('jokes.txt')
@@ -76,7 +74,7 @@ class Joke(callbacks.Privmsg):
     	irc.reply(random.choice(jokelist).lstrip().rstrip('\r\n'))
 
     def fact(self,irc,msg,args):
-    	"""
+    	"""takes no arguments
 	Get a random fact from my massive collection of weird facts
 	"""
         factpath = conf.supybot.directories.data.dirize('facts.txt')
@@ -84,6 +82,25 @@ class Joke(callbacks.Privmsg):
 
     	irc.reply(random.choice(factlist).lstrip().rstrip('\r\n'))
 
+    def addjoke(self,irc,msg,args,text):
+        """<text>
+        adds a new joke to the jokes database
+        """
+        with open(conf.supybot.directories.data.dirize('jokes.txt'), 'a') as f:
+            f.write(text + '\n')
+        irc.replySuccess()
+    addjoke = wrap(addjoke, ['text'])
+
+    def addfact(self,irc,msg,args,text):
+        """<text>
+        adds a new fact to the facts database
+        """
+        with open(conf.supybot.directories.data.dirize('facts.txt'), 'a') as f:
+            f.write(text + '\n')
+        irc.replySuccess()
+    addfact = wrap(addfact, ['text'])
+
 Class = Joke
 
 
+# vim:set shiftwidth=4 softtabstop=4 expandtab textwidth=79:
