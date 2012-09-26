@@ -43,18 +43,14 @@ from supybot.i18n import PluginInternationalization, internationalizeDocstring
 
 _ = PluginInternationalization('Fun')
 
-try:
-    with open(conf.supybot.directories.data.dirize('jokes.txt')) as f: pass
-except IOError:
-    src = os.path.join(os.path.dirname(__file__), os.path.join('jokes.txt'))
-    dst = str(conf.supybot.directories.data.dirize('jokes.txt'))
+if not os.path.isfile(conf.supybot.directories.data.dirize('jokes.db')):
+    src = os.path.join(os.path.dirname(__file__), os.path.join('jokes.db'))
+    dst = str(conf.supybot.directories.data.dirize('jokes.db'))
     shutil.copyfile(src, dst)
 
-try:
-    with open(conf.supybot.directories.data.dirize('facts.txt')) as f: pass
-except IOError:
-    src = os.path.join(os.path.dirname(__file__), os.path.join('jokes.txt'))
-    dst = str(conf.supybot.directories.data.dirize('facts.txt'))
+if not os.path.isfile(conf.supybot.directories.data.dirize('facts.db')):
+    src = os.path.join(os.path.dirname(__file__), os.path.join('jokes.db'))
+    dst = str(conf.supybot.directories.data.dirize('facts.db'))
     shutil.copyfile(src, dst)
 
 @internationalizeDocstring
@@ -68,7 +64,7 @@ class Fun(callbacks.Plugin):
     	"""takes no arguments
 	Get a random joke from my massive collection of terrible jokes
 	"""
-	jokepath = conf.supybot.directories.data.dirize('jokes.txt')
+	jokepath = conf.supybot.directories.data.dirize('jokes.db')
         jokelist = open(jokepath).readlines()
 
     	irc.reply(random.choice(jokelist).lstrip().rstrip('\r\n'))
@@ -77,7 +73,7 @@ class Fun(callbacks.Plugin):
     	"""takes no arguments
 	Get a random fact from my massive collection of weird facts
 	"""
-        factpath = conf.supybot.directories.data.dirize('facts.txt')
+        factpath = conf.supybot.directories.data.dirize('facts.db')
 	factlist = open(factpath).readlines()
 
     	irc.reply(random.choice(factlist).lstrip().rstrip('\r\n'))
@@ -86,7 +82,7 @@ class Fun(callbacks.Plugin):
         """<text>
         adds a new joke to the jokes database
         """
-        with open(conf.supybot.directories.data.dirize('jokes.txt'), 'a') as f:
+        with open(conf.supybot.directories.data.dirize('jokes.db'), 'a') as f:
             f.write(text + '\n')
         irc.replySuccess()
     addjoke = wrap(addjoke, ['text'])
@@ -95,7 +91,7 @@ class Fun(callbacks.Plugin):
         """<text>
         adds a new fact to the facts database
         """
-        with open(conf.supybot.directories.data.dirize('facts.txt'), 'a') as f:
+        with open(conf.supybot.directories.data.dirize('facts.db'), 'a') as f:
             f.write(text + '\n')
         irc.replySuccess()
     addfact = wrap(addfact, ['text'])
