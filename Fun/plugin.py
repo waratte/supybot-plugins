@@ -49,7 +49,7 @@ if not os.path.isfile(conf.supybot.directories.data.dirize('jokes.db')):
     shutil.copyfile(src, dst)
 
 if not os.path.isfile(conf.supybot.directories.data.dirize('facts.db')):
-    src = os.path.join(os.path.dirname(__file__), os.path.join('jokes.db'))
+    src = os.path.join(os.path.dirname(__file__), os.path.join('facts.db'))
     dst = str(conf.supybot.directories.data.dirize('facts.db'))
     shutil.copyfile(src, dst)
 
