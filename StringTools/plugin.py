@@ -48,8 +48,7 @@ class StringTools(callbacks.Plugin):
         """<num> <text>
         Repeats <text> <num> times.
         """
-        words = text + ' '
-        irc.reply(words * num)
+        irc.reply(' '.join(text * num))
     repeat = wrap(repeat, ['int', 'text'])
 
     def count(self, irc, msg, args, text):
