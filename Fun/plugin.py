@@ -62,21 +62,25 @@ class Fun(callbacks.Plugin):
 
     def joke(self,irc,msg,args):
     	"""takes no arguments
-	Get a random joke from my massive collection of terrible jokes
+	Get a random joke from the database of terrible jokes
 	"""
 	jokepath = conf.supybot.directories.data.dirize('jokes.db')
         jokelist = open(jokepath).readlines()
 
     	irc.reply(random.choice(jokelist).lstrip().rstrip('\r\n'))
 
+    joke = wrap(joke)
+
     def fact(self,irc,msg,args):
     	"""takes no arguments
-	Get a random fact from my massive collection of weird facts
+	Get a random fact from the database of weird facts
 	"""
         factpath = conf.supybot.directories.data.dirize('facts.db')
 	factlist = open(factpath).readlines()
 
     	irc.reply(random.choice(factlist).lstrip().rstrip('\r\n'))
+
+    fact = wrap(fact)
 
     def addjoke(self,irc,msg,args,text):
         """<text>
