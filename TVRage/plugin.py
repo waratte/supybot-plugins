@@ -1,5 +1,6 @@
 ###
 # Copyright (c) 2011, Mikael Emilsson (mikael.emilsson@gmail.com)
+# Copyright (c) 2012, resistivecorpse
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -128,7 +129,7 @@ class TVRage(callbacks.Plugin):
         if not showname:
             irc.reply("Could not find the series.")
         else:
-            irc.reply(format('%s: Status: %s. Airs on %s at %s. Genres: %s %s', ircutils.bold(showname[0]), status[0], network[0], airtime[0], genres[0], showurl[0]), prefixNick=False)
+            irc.reply(format('%s: Status: %s. Airs on %s on %s. Genres: %s %s', ircutils.bold(showname[0]), status[0], network[0], airtime[0], genres[0], showurl[0]), prefixNick=False)
     info = wrap(info,['text'])
 
     def search(self, show):
