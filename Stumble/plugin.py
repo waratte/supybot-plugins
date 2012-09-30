@@ -41,7 +41,7 @@ _ = PluginInternationalization('Stumble')
 
 @internationalizeDocstring
 class Stumble(callbacks.Plugin):
-    """This plugin returns random wesite links using stumbleupon and wikipedia."""
+    """This plugin returns random wesite links using stumbleupon, imgur and wikipedia."""
     threaded = True
 
     def stumbleupon(self, irc, msg, args):
@@ -73,6 +73,19 @@ class Stumble(callbacks.Plugin):
         irc.reply(source)
 
     wikipedia = wrap(wikipedia)
+
+    def imgur(self, irc, msg, args):
+        """takes no arguments
+        returns a random gallery from imgur.com
+        """
+        user_agent = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1"
+        url = "http://imgur.com/gallery/random"
+        req = urllib2.Request(url, None, { 'User-Agent' : user_agent})
+        f = urllib2.urlopen(req)
+        source = f.geturl()
+        irc.reply(source)
+
+    imgur = wrap(imgur)
 
 Class = Stumble
 

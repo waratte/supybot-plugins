@@ -1,1 +1,1 @@
-A plugin for returning random website links, using stumbleupon and wikipedia
+A plugin for returning random website links, using stumbleupon, imgur and wikipedia
