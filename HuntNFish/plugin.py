@@ -60,49 +60,64 @@ class HuntNFish(callbacks.Plugin):
     """Adds hunt and fish commands for a basic hunting and fishing game."""
     threaded = True
 
+    def __init__(self, irc):
+        self.__parent = super(HuntNFish, self)
+        self.__parent.__init__(irc)
+        self._huntersEndTime = {}
+        self._fishersEndTime = {}
+
     def hunt(self,irc,msg,args):
         """takes no arguments
         performs a random hunt
         """
-        if(self.registryValue('enable', msg.args[0])):
-            animals = ['bear', 'gopher', 'rabbit', 'hunter', 'deer', 'fox', 'duck', 'moose', 'pokemon named Pikachu', 'park ranger', 'Yogi Bear', 'Boo Boo Bear', 'dog named Benji', 'cow', 'raccoon', 'koala bear', 'camper', 'channel lamer', 'your mom']
-            places = ['in some bushes', 'in a hunting blind', 'in a hole', 'up in a tree', 'in a hiding place', 'out in the open', 'in the middle of a field', 'downtown', 'on a street corner', 'at the local mall']
+        timeoutLength = self.registryValue('timeout')
+        player = msg.nick
+        currentTime = time.time()
 
-            with open(hunttrophy, 'r') as f:
-                data = f.readlines()
-                highScore = data[2].rstrip('\n')
-            huntrandom = random.getstate()   
-            random.seed(time.time())
-            currentWhat = random.choice(animals)
-            currentWhere = random.choice(places)
-            weightType = self.registryValue('weightType')
-            weight = (random.randint(int(highScore)/2,int(highScore)+10))
-            thisHunt = '%s goes hunting %s for a %s%s %s' % (msg.nick, currentWhere, weight, weightType, currentWhat)
-            irc.reply(thisHunt)
-            irc.reply("aims....")
-            irc.reply("fires.....")
-            time.sleep(random.randint(4,8))#pauses the output between line 1 and 2 for 4-8 seconds
-            huntChance = random.randint(1,100)
-            successRate = self.registryValue('SuccessRate')
-            random.setstate(huntrandom)
+        if player in self._huntersEndTime and self._huntersEndTime[player] > currentTime:
+            irc.reply("Hold on, your weapon is reloading...")
+        else:
+            endTime = currentTime + timeoutLength
+            self._huntersEndTime[player] = endTime
+            if(self.registryValue('enable', msg.args[0])):
+                animals = ['bear', 'gopher', 'rabbit', 'hunter', 'deer', 'fox', 'duck', 'moose', 'pokemon named Pikachu', 'park ranger', 'Yogi Bear', 'Boo Boo Bear', 'dog named Benji', 'cow', 'raccoon', 'koala bear', 'camper', 'channel lamer', 'your mom']
+                places = ['in some bushes', 'in a hunting blind', 'in a hole', 'up in a tree', 'in a hiding place', 'out in the open', 'in the middle of a field', 'downtown', 'on a street corner', 'at the local mall']
 
-            if huntChance < successRate:
-                win = 'way to go, %s. You killed the %s%s %s' % (msg.nick, weight, weightType, currentWhat)
-                irc.reply(win)
                 with open(hunttrophy, 'r') as f:
                     data = f.readlines()
-                    bigHunt = data[2].rstrip('\n')
-                    if weight > int(bigHunt):
-                        with open(hunttrophy, 'w') as f:
-                            data[0] = msg.nick
-                            data[1] = currentWhat 
-                            data[2] = weight
-                            f.write(str(data[0]) + '\n' + str(data[1]) + '\n' + str(data[2]))
-                            irc.reply("you got a new highscore")
+                    highScore = data[2].rstrip('\n')
+                huntrandom = random.getstate()   
+                random.seed(time.time())
+                currentWhat = random.choice(animals)
+                currentWhere = random.choice(places)
+                weightType = self.registryValue('weightType')
+                weight = (random.randint(int(highScore)/2,int(highScore)+10))
+                thisHunt = '%s goes hunting %s for a %s%s %s' % (msg.nick, currentWhere, weight, weightType, currentWhat)
+                irc.reply(thisHunt)
+                irc.reply("aims....")
+                irc.reply("fires.....")
+                time.sleep(random.randint(4,8))#pauses the output between line 1 and 2 for 4-8 seconds
+                huntChance = random.randint(1,100)
+                successRate = self.registryValue('SuccessRate')
+                random.setstate(huntrandom)
 
-            else:
-                lose = ' '.join(["oops, you missed", msg.nick])
-                irc.reply(lose)
+                if huntChance < successRate:
+                    win = 'way to go, %s. You killed the %s%s %s' % (msg.nick, weight, weightType, currentWhat)
+                    irc.reply(win)
+                    with open(hunttrophy, 'r') as f:
+                        data = f.readlines()
+                        bigHunt = data[2].rstrip('\n')
+                        if weight > int(bigHunt):
+                            with open(hunttrophy, 'w') as f:
+                                data[0] = msg.nick
+                                data[1] = currentWhat 
+                                data[2] = weight
+                                f.write(str(data[0]) + '\n' + str(data[1]) + '\n' + str(data[2]))
+                                irc.reply("you got a new highscore")
+
+                else:
+                    lose = ' '.join(["oops, you missed", msg.nick])
+                    irc.reply(lose)
 
     hunt = wrap(hunt)
 
@@ -110,45 +125,54 @@ class HuntNFish(callbacks.Plugin):
         """takes no arguments
         performs a random fishing trip
         """
-        if(self.registryValue('enable', msg.args[0])):
-            fishes = ('Salmon', 'Herring', 'Yellowfin Tuna', 'Pink Salmon', 'Chub', 'Barbel', 'Perch', 'Northern Pike', 'Brown Trout', 'Arctic Char', 'Roach', 'Brayling', 'Bleak', 'Cat Fish', 'Sun Fish', 'Old Tire', 'Rusty Tin Can', 'Genie Lamp', 'Love Message In A Bottle', 'Old Log', 'Rubber Boot' , 'Dead Body', 'Loch Ness Monster', 'Old Fishing Lure', 'Piece of the Titanic', 'Chunk of Atlantis', 'Squid', 'Whale', 'Dolphin',  'Porpoise' , 'Stingray', 'Submarine', 'Seal', 'Seahorse', 'Jellyfish', 'Starfish', 'Electric Eel', 'Great White Shark', 'Scuba Diver' , 'Lag Monster', 'Virus', 'Soggy Pack of Smokes', 'Bag of Weed', 'Boat Anchor', 'Pair Of Floaties', 'Mermaid', ' Merman', 'Halibut', 'Tiddler', 'Sock', 'Trout')
-            fishSpots = ('a Stream', 'a Lake', 'a River', 'a Pond', 'an Ocean', 'a Bathtub', 'a Kiddies Swimming Pool', 'a Toilet', 'a Pile of Vomit', 'a Pool of Urine', 'a Kitchen Sink', 'a Bathroom Sink', 'a Mud Puddle', 'a Pail of Water', 'a Bowl of Jell-O', 'a Wash Basin', 'a Rain Barrel', 'an Aquarium', 'a SnowBank', 'a WaterFall', 'a Cup of Coffee', 'a Glass of Milk')
+        timeoutLength = self.registryValue('timeout')
+        player = msg.nick
+        currentTime = time.time()
 
-            with open(fishtrophy, 'r') as f:
-                data = f.readlines()
-                highScore = data[2].rstrip('\n')
-            fishrandom = random.getstate()
-            random.seed(time.time())
-            currentWhat = random.choice(fishes)
-            currentWhere = random.choice(fishSpots)
-            weight = random.randint(int(highScore)/2,int(highScore)+10)
-            weightType = self.registryValue('weightType')
-            thisFishing = '%s goes fishing in %s' % (msg.nick, currentWhere)
-            irc.reply(thisFishing)
-            irc.reply("casts in....")
-            irc.reply('a %s%s %s is biting...' % (str(weight), weightType, currentWhat))
-            time.sleep(random.randint(4,8))#pauses the output between line 1 and 2 for 4-8 seconds
-            huntChance = random.randint(1,100)
-            successRate = self.registryValue('SuccessRate')
-            random.setstate(fishrandom)
+        if player in self._fishersEndTime and self._fishersEndTime[player] > currentTime:
+            irc.reply("Hold on, still putting bait on your fishing pole...")
+        else:
+            endTime = currentTime + timeoutLength
+            self._fishersEndTime[player] = endTime
+            if(self.registryValue('enable', msg.args[0])):
+                fishes = ('Salmon', 'Herring', 'Yellowfin Tuna', 'Pink Salmon', 'Chub', 'Barbel', 'Perch', 'Northern Pike', 'Brown Trout', 'Arctic Char', 'Roach', 'Brayling', 'Bleak', 'Cat Fish', 'Sun Fish', 'Old Tire', 'Rusty Tin Can', 'Genie Lamp', 'Love Message In A Bottle', 'Old Log', 'Rubber Boot' , 'Dead Body', 'Loch Ness Monster', 'Old Fishing Lure', 'Piece of the Titanic', 'Chunk of Atlantis', 'Squid', 'Whale', 'Dolphin',  'Porpoise' , 'Stingray', 'Submarine', 'Seal', 'Seahorse', 'Jellyfish', 'Starfish', 'Electric Eel', 'Great White Shark', 'Scuba Diver' , 'Lag Monster', 'Virus', 'Soggy Pack of Smokes', 'Bag of Weed', 'Boat Anchor', 'Pair Of Floaties', 'Mermaid', ' Merman', 'Halibut', 'Tiddler', 'Sock', 'Trout')
+                fishSpots = ('a Stream', 'a Lake', 'a River', 'a Pond', 'an Ocean', 'a Bathtub', 'a Kiddies Swimming Pool', 'a Toilet', 'a Pile of Vomit', 'a Pool of Urine', 'a Kitchen Sink', 'a Bathroom Sink', 'a Mud Puddle', 'a Pail of Water', 'a Bowl of Jell-O', 'a Wash Basin', 'a Rain Barrel', 'an Aquarium', 'a SnowBank', 'a WaterFall', 'a Cup of Coffee', 'a Glass of Milk')
 
-            if huntChance < successRate:
-                win = 'way to go, %s. You caught the %s%s %s' % (msg.nick, str(weight), weightType, currentWhat)
-                irc.reply(win)
                 with open(fishtrophy, 'r') as f:
                     data = f.readlines()
-                    bigFish = data[2].rstrip('\n')
-                    if weight > int(bigFish):
-                        with open(fishtrophy, 'w') as f:
-                            data[0] = msg.nick
-                            data[1] = currentWhat 
-                            data[2] = weight
-                            f.writelines(str(data[0]) + '\n' + str(data[1]) + '\n' + str(data[2]))
-                            irc.reply("you got a new highscore")
+                    highScore = data[2].rstrip('\n')
+                fishrandom = random.getstate()
+                random.seed(time.time())
+                currentWhat = random.choice(fishes)
+                currentWhere = random.choice(fishSpots)
+                weight = random.randint(int(highScore)/2,int(highScore)+10)
+                weightType = self.registryValue('weightType')
+                thisFishing = '%s goes fishing in %s' % (msg.nick, currentWhere)
+                irc.reply(thisFishing)
+                irc.reply("casts in....")
+                irc.reply('a %s%s %s is biting...' % (str(weight), weightType, currentWhat))
+                time.sleep(random.randint(4,8))#pauses the output between line 1 and 2 for 4-8 seconds
+                huntChance = random.randint(1,100)
+                successRate = self.registryValue('SuccessRate')
+                random.setstate(fishrandom)
 
-            else:
-                lose = ' '.join(["oops, it got away", msg.nick])
-                irc.reply(lose)
+                if huntChance < successRate:
+                    win = 'way to go, %s. You caught the %s%s %s' % (msg.nick, str(weight), weightType, currentWhat)
+                    irc.reply(win)
+                    with open(fishtrophy, 'r') as f:
+                        data = f.readlines()
+                        bigFish = data[2].rstrip('\n')
+                        if weight > int(bigFish):
+                            with open(fishtrophy, 'w') as f:
+                                data[0] = msg.nick
+                                data[1] = currentWhat 
+                                data[2] = weight
+                                f.writelines(str(data[0]) + '\n' + str(data[1]) + '\n' + str(data[2]))
+                                irc.reply("you got a new highscore")
+
+                else:
+                    lose = ' '.join(["oops, it got away", msg.nick])
+                    irc.reply(lose)
 
     fish = wrap(fish)
 
